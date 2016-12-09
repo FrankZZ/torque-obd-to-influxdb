@@ -1,0 +1,6 @@
+node_modules
+grafana
+influxdb
+docker-compose.yml
+.gitignore
+README.md

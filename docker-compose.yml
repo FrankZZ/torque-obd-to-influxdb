@@ -1,0 +1,27 @@
+version: '2'
+services:
+  torquetoinfluxdb:
+    build: .
+    depends_on:
+     - influxdb
+    ports:
+     - "3001:3001"
+    environment:
+    - HTTP_PORT=3001
+    - DB_HOST=influxdb
+    - DB_NAME=carobd
+  grafana:
+    image: grafana/grafana:latest
+    depends_on:
+     - influxdb
+    ports:
+     - "3000:3000"
+    volumes:
+     - ./grafana:/var/lib/grafana
+  influxdb:
+    image: influxdb:alpine
+    ports:
+     - "8083:8083"
+     - "8086:8086"
+    volumes:
+     - ./influxdb:/var/lib/influxdb
