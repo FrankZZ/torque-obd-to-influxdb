@@ -11,6 +11,8 @@ const log = bunyan.createLogger({
 
 let speed = 10;
 
+const PID_DICT = require('./pid_dictionary.json');
+
 const DATABASE_NAME = process.env.DB_NAME || 'car_obd';
 const DATABASE_HOST = process.env.DB_HOST || 'localhost';
 const HTTP_PORT = parseInt(process.env.HTTP_PORT || '3001');
@@ -45,11 +47,13 @@ influx.getDatabaseNames()
             for(const k in req.query) {
                 if (Object.hasOwnProperty.call(req.query, k) && /^k/.test(k)) {
                     const val = parseFloat(req.query[k]);
+                    const name = PID_DICT[k];
                     log.debug({
                         key: k,
+                        keyName: name,
                         value: val
                     }, 'Got Torque queryString parameter');
-                    keys[k.slice(1)] = val;
+                    keys[name || k] = val;
                 } else {
                     log.debug({
                         key: k,
@@ -62,13 +66,10 @@ influx.getDatabaseNames()
                 keys: keys
             }, 'queryString parameters are parsed');
 
-            influx.writePoints([
+            influx.writeMeasurement('car', [
                 {
-                    measurement: 'car',
-                    tags: {
-                        car: req.query.car
-                    },
-                    fields: keys
+                    fields: keys,
+                    timestamp: new Date(parseInt(req.query.time))
                 }
             ]).then(() => {
                 log.debug('Wrote points to influx');
