@@ -1,4 +1,4 @@
-node-torque-bhp-influx
+torque-obd-to-influxdb
 ======================
 Purpose
 -------
@@ -6,11 +6,8 @@ The purpose of this service is to expose an API to use in the Torque Android app
 
 Usage
 -----
-Run the service `node . | bunyan`. 
-Optionally, configure environment variables
+Run the service using docker-compose `docker-compose up -d` and you can access Grafana on `localhost:3000`.
 
-```
-DB_NAME=car_obd
-DB_HOST=localhost
-HTTP_PORT=3001
-```
+*If your docker-machine ip is not localhost, please change it as needed*
+
+Please keep in mind that you have to add the influxdb datasource in Grafana.
