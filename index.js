@@ -39,7 +39,7 @@ influx.getDatabaseNames()
 
         restify.get('/torque', (req, res, next) => {
             log.info({
-                query: req.query
+                req: req
             }, 'Got /torque');
 
             let keys = {};
@@ -47,13 +47,13 @@ influx.getDatabaseNames()
             for(const k in req.query) {
                 if (Object.hasOwnProperty.call(req.query, k) && /^k/.test(k)) {
                     const val = parseFloat(req.query[k]);
-                    const name = PID_DICT[k];
+                    const name = PID_DICT[k] || 'not_found';
                     log.debug({
                         key: k,
                         keyName: name,
                         value: val
                     }, 'Got Torque queryString parameter');
-                    keys[name || k] = val;
+                    keys[name] = val;
                 } else {
                     log.debug({
                         key: k,
